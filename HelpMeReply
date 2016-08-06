@@ -1,0 +1,63 @@
+package me.benzplayz;
+
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
+
+public class HelpReplyCommand
+  extends Command
+{
+  public HelpReplyCommand(String name)
+  {
+    super("ra");
+  }
+  
+  public void execute(CommandSender sender, String[] args)
+  {
+    if ((sender instanceof ProxiedPlayer))
+    {
+      ProxiedPlayer player = (ProxiedPlayer)sender;
+      
+      String Prefix = "&6&l[&4&lREPLY&6&l]&r &f";
+      String PlayerName = "&6[&5" + ((ProxiedPlayer)sender).getDisplayName().toString() + "&6] &f";
+      String Arguments = "";
+      if (args.length > 1)
+      {
+        for (int i = 0; i < args.length; i++) {
+          if (i != 0)
+          {
+            String arg = args[i] + " ";
+            Arguments = Arguments + arg;
+          }
+        }
+        String PlayerName2 = "&6[&b" + args[0] + "&6] &f";
+        String PlayerName3 = args[0];
+        if (sender.hasPermission("helpme.reply"))
+        {
+          player.sendMessage(ChatColor.translateAlternateColorCodes('&', Prefix + PlayerName + Arguments));
+          for (ProxiedPlayer receivers : ProxyServer.getInstance().getPlayers())
+          {
+            if (receivers.getDisplayName().equalsIgnoreCase(PlayerName3)) {
+              receivers.sendMessage(ChatColor.translateAlternateColorCodes('&', Prefix + PlayerName + Arguments));
+            }
+            if (receivers.hasPermission("helpme.see")) {
+              receivers.sendMessage(ChatColor.translateAlternateColorCodes('&', Prefix + PlayerName + PlayerName2 + Arguments));
+            }
+          }
+        }
+        else
+        {
+          sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "You do not have permission to do this."));
+          sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "Please contact a server admin if you think this is an error!"));
+        }
+      }
+      else
+      {
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "Incorrect usage please use:"));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "/ra <name> <message>"));
+      }
+    }
+  }
+}
